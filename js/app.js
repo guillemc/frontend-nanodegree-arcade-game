@@ -1,35 +1,135 @@
-// Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+var CANVAS_W = 505,
+    CANVAS_H = 606,
+    TILE_W = 101,
+    TILE_H = 83,
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+    // tiles have some empty space that we must compensate for...
+    ENEMY_H_OFFSET = 78,
+    PLAYER_H_OFFSET = 60,
+    CANVAS_H_OFFSET = 57;
+
+// Enemies our player must avoid
+var Enemy = function(speed, x, y) {
     this.sprite = 'images/enemy-bug.png';
+    this.speed = speed;
+    this.x = x;
+    this.y = y;
+    this.w = getRandomInt(CANVAS_W, 2*CANVAS_W);
 };
 
-// Update the enemy's position, required method for game
+// Update the enemy's position
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    this.x += this.speed * dt;
+    if (this.x >= this.w) this.x = -TILE_W;
+    if (this.checkCollision(player)) {
+        restart();
+    }
 };
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), 0, ENEMY_H_OFFSET, TILE_W, TILE_H, this.x, this.y, TILE_W, TILE_H);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+Enemy.prototype.checkCollision = function (item) {
+    var bounds = [[this.x, this.y], [this.x + TILE_W, this.y + TILE_H]];
+    var margin = 30;
+    var points = [
+        [item.x + margin, item.y + margin],
+        [item.x + TILE_W - margin, item.y + margin],
+        [item.x + margin, item.y + TILE_H - margin],
+        [item.x + TILE_W - margin, item.y + TILE_H - margin]
+    ];
 
+    return points.some(function (point) {
+        return point[0] >= bounds[0][0] && point[0] <= bounds[1][0]
+            && point[1] >= bounds[0][1] && point[1] <= bounds[1][1];
+    });
+};
+
+var Player = function() {
+    this.sprite = 'images/char-boy.png';
+    this.speed = 100;
+    this.direction = null;
+    this.x = this.initialPosition[0];
+    this.y = this.initialPosition[1];
+}
+
+Player.prototype.update = function(dt) {
+    if (this.direction == 'left') {
+        this.x -= this.speed*dt;
+    } else if (this.direction == 'right') {
+        this.x += this.speed*dt;
+    } else if (this.direction == 'up') {
+        this.y -= this.speed*dt;
+    } else if (this.direction == 'down') {
+        this.y += this.speed*dt;
+    }
+
+    //limit x movement
+    if (this.x <= 0) this.x = 0;
+    else if (this.x >= CANVAS_W - TILE_W) this.x = CANVAS_W - TILE_W;
+
+    //limit y movement
+    if (this.y <= CANVAS_H_OFFSET) {
+        incrementLevel();
+    } else if (this.y >= this.initialPosition[1]) {
+        this.y = this.initialPosition[1];
+    }
+};
+
+Player.prototype.initialPosition = [CANVAS_W/2 - TILE_W/2, CANVAS_H_OFFSET + TILE_H*5];
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), 0, PLAYER_H_OFFSET, TILE_W, TILE_H, this.x, this.y, TILE_W, TILE_H);
+};
+
+Player.prototype.handleInput = function (direction) {
+    this.direction = direction;
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var player = new Player();
+var allEnemies = [];
 
+function initEnemies() {
+    for (var i = 1; i <= 3; i++) {
+        addEnemy();
+    }
+}
+
+function addEnemy() {
+    allEnemies.push(new Enemy(
+        getRandomInt(20, 80),
+        getRandomInt(0, CANVAS_W - TILE_W),
+        CANVAS_H_OFFSET + TILE_H*getRandomInt(1,4)
+    ));
+}
+
+function incrementLevel() {
+    player.y = player.initialPosition[1];
+    if (allEnemies.length < 10) {
+        addEnemy();
+    } else {
+        allEnemies.forEach(function (enemy) {
+            enemy.speed += 5;
+        });
+    }
+    player.speed += 5;
+}
+
+function restart() {
+    player.x = player.initialPosition[0];
+    player.y = player.initialPosition[1];
+    player.direction = null;
+    allEnemies = [];
+    initEnemies();
+}
+
+initEnemies();
 
 
 // This listens for key presses and sends the keys to your
@@ -44,3 +144,9 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+// Returns a random integer between min (included) and max (excluded)
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
