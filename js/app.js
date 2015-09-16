@@ -94,6 +94,7 @@ Player.prototype.handleInput = function (direction) {
 // Place the player object in a variable called player
 var player = new Player();
 var allEnemies = [];
+var level = 0;
 
 function initEnemies() {
     for (var i = 1; i <= 3; i++) {
@@ -110,6 +111,7 @@ function addEnemy() {
 }
 
 function incrementLevel() {
+    level++;
     player.y = player.initialPosition[1];
     if (allEnemies.length < 10) {
         addEnemy();
@@ -124,6 +126,7 @@ function incrementLevel() {
 function restart() {
     Player.call(player);
     allEnemies = [];
+    level = 0;
     initEnemies();
 }
 

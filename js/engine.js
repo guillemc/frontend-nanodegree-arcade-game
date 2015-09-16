@@ -138,6 +138,7 @@ var Engine = (function(global) {
 
 
         renderEntities();
+        renderLevel();
     }
 
     /* This function is called by the render function and is called on each game
@@ -153,6 +154,12 @@ var Engine = (function(global) {
         });
 
         player.render();
+    }
+
+    function renderLevel() {
+        ctx.font = "22px serif";
+        ctx.fillStyle = "rgba(255,165,0,1)";
+        ctx.fillText("Level " + level, 10, 80);
     }
 
     /* This function does nothing but it could have been a good place to
