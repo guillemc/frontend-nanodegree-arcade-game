@@ -54,7 +54,7 @@ var Player = function() {
     this.direction = null;
     this.x = this.initialPosition[0];
     this.y = this.initialPosition[1];
-}
+};
 
 Player.prototype.update = function(dt) {
     if (this.direction == 'left') {
@@ -87,7 +87,7 @@ Player.prototype.render = function() {
 
 Player.prototype.handleInput = function (direction) {
     this.direction = direction;
-}
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -104,7 +104,7 @@ function initEnemies() {
 function addEnemy() {
     allEnemies.push(new Enemy(
         getRandomInt(20, 80),
-        getRandomInt(0, CANVAS_W - TILE_W),
+        -TILE_W,
         CANVAS_H_OFFSET + TILE_H*getRandomInt(1,4)
     ));
 }
@@ -122,9 +122,7 @@ function incrementLevel() {
 }
 
 function restart() {
-    player.x = player.initialPosition[0];
-    player.y = player.initialPosition[1];
-    player.direction = null;
+    Player.call(player);
     allEnemies = [];
     initEnemies();
 }
