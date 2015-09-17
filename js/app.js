@@ -33,18 +33,19 @@ Enemy.prototype.render = function() {
 };
 
 Enemy.prototype.checkCollision = function (item) {
-    var bounds = [[this.x, this.y], [this.x + TILE_W, this.y + TILE_H]];
-    var margin = 30;
-    var points = [
-        [item.x + margin, item.y + margin],
-        [item.x + TILE_W - margin, item.y + margin],
-        [item.x + margin, item.y + TILE_H - margin],
-        [item.x + TILE_W - margin, item.y + TILE_H - margin]
+    var topLeft = {x: this.x, y:this.y},
+        bottomRight = {x: this.x + TILE_W, y: this.y + TILE_H};
+    var margin = 20;
+    var corners = [
+        {x: item.x + margin, y: item.y + margin},
+        {x: item.x + TILE_W - margin, y: item.y + margin},
+        {x: item.x + margin, y: item.y + TILE_H - margin},
+        {x: item.x + TILE_W - margin, y: item.y + TILE_H - margin}
     ];
 
-    return points.some(function (point) {
-        return point[0] >= bounds[0][0] && point[0] <= bounds[1][0]
-            && point[1] >= bounds[0][1] && point[1] <= bounds[1][1];
+    return corners.some(function (point) {
+        return point.x > topLeft.x && point.x < bottomRight.x
+            && point.y > topLeft.y && point.y < bottomRight.y;
     });
 };
 
