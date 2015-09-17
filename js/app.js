@@ -96,6 +96,7 @@ Player.prototype.handleInput = function (direction) {
 var player = new Player();
 var allEnemies = [];
 var level = 0;
+var restarted = null;
 
 function initEnemies() {
     for (var i = 1; i <= 3; i++) {
@@ -129,6 +130,7 @@ function restart() {
     allEnemies = [];
     level = 0;
     initEnemies();
+    restarted = Date.now();
 }
 
 initEnemies();

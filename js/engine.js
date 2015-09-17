@@ -160,6 +160,29 @@ var Engine = (function(global) {
         ctx.font = "22px serif";
         ctx.fillStyle = "rgba(255,165,0,1)";
         ctx.fillText("Level " + level, 10, 80);
+
+        if (restarted && Date.now() - restarted < 500) {
+            inverseColor(ctx);
+        } else {
+            restarted = null;
+        }
+    }
+
+    function inverseColor(cts) {
+        var imgData = ctx.getImageData(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight),
+            data = imgData.data,
+            numPixels = data.length / 4,
+            avg;
+        for (var i = 0; i < numPixels; i++) {
+            data[i*4] = 255 - data[i*4];
+            data[i*4 + 1] = 255 - data[i*4 + 1];
+            data[i*4 + 2] = 255 - data[i*4 + 2];
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
+
+    function grayScaleValue(r, g, b) {
+        return 0.3*r + 0.59*g + 0.11*b;
     }
 
     /* This function does nothing but it could have been a good place to
