@@ -90,6 +90,10 @@ Player.prototype.handleInput = function (direction) {
     this.direction = direction;
 };
 
+Player.prototype.contains = function (x, y) {
+    return x >= this.x && x <= this.x + TILE_W && y >= this.y && y <= this.y + TILE_H;
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -150,6 +154,39 @@ document.addEventListener('keyup', function(e) {
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
+});
+
+document.addEventListener('init', function(e) {
+    ctx.canvas.addEventListener('click', function(e) {
+        var mouseX, mouseY, playerX, playerY, angle, direction;
+        // http://stackoverflow.com/a/8943024
+        if (e.offsetX == null) { // Firefox
+            mouseX = e.originalEvent.layerX;
+            mouseY = e.originalEvent.layerY;
+        } else { // Other browsers
+            mouseX = e.offsetX;
+            mouseY = e.offsetY;
+        }
+
+        if (player.contains(mouseX, mouseY)) {
+            player.handleInput(null); // stop it
+            return;
+        }
+
+        playerX = player.x + TILE_W/2,
+        playerY = player.y + TILE_H/2;
+        angle = Math.atan2(mouseY - playerY, mouseX - playerX)*180/Math.PI;
+        if (angle >=45 && angle <= 135) {
+            direction = 'down';
+        } else if (angle >= -45 && angle < 45) {
+            direction = 'right';
+        } else if (angle < -45 && angle >= -135) {
+            direction = 'up';
+        } else {
+            direction = 'left';
+        }
+        player.handleInput(direction);
+    });
 });
 
 

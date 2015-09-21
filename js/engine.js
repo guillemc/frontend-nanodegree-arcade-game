@@ -67,6 +67,8 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
+        var event = new Event('init');
+        doc.dispatchEvent(event);
     }
 
     /* This function is called by main (our game loop) and itself calls all
