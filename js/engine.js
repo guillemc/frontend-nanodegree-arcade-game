@@ -45,7 +45,7 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-        update(dt);
+        if (!frozen) update(dt);
         render();
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -139,6 +139,10 @@ var Engine = (function(global) {
 
         renderEntities();
         renderLevel();
+
+        if (frozen) {
+            inverseColor(ctx);
+        }
     }
 
     /* This function is called by the render function and is called on each game
@@ -160,12 +164,6 @@ var Engine = (function(global) {
         ctx.font = "22px serif";
         ctx.fillStyle = "rgba(255,165,0,1)";
         ctx.fillText("Level " + level, 10, 80);
-
-        if (restarted && Date.now() - restarted < 500) {
-            inverseColor(ctx);
-        } else {
-            restarted = null;
-        }
     }
 
     function inverseColor(cts) {

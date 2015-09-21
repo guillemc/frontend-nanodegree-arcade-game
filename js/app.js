@@ -96,7 +96,7 @@ Player.prototype.handleInput = function (direction) {
 var player = new Player();
 var allEnemies = [];
 var level = 0;
-var restarted = null;
+var frozen = false;
 
 function initEnemies() {
     for (var i = 1; i <= 3; i++) {
@@ -126,11 +126,14 @@ function incrementLevel() {
 }
 
 function restart() {
-    Player.call(player);
-    allEnemies = [];
-    level = 0;
-    initEnemies();
-    restarted = Date.now();
+    frozen = true;
+    setTimeout(function () {
+        frozen = false;
+        Player.call(player);
+        allEnemies = [];
+        level = 0;
+        initEnemies();
+    }, 500);
 }
 
 initEnemies();
