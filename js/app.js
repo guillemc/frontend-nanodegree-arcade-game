@@ -159,14 +159,8 @@ document.addEventListener('keyup', function(e) {
 document.addEventListener('init', function(e) {
     ctx.canvas.addEventListener('click', function(e) {
         var mouseX, mouseY, playerX, playerY, angle, direction;
-        // http://stackoverflow.com/a/8943024
-        if (e.offsetX == null) { // Firefox
-            mouseX = e.originalEvent.layerX;
-            mouseY = e.originalEvent.layerY;
-        } else { // Other browsers
-            mouseX = e.offsetX;
-            mouseY = e.offsetY;
-        }
+        mouseX = e.offsetX;
+        mouseY = e.offsetY;
 
         if (player.contains(mouseX, mouseY)) {
             player.handleInput(null); // stop it
